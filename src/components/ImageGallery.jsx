@@ -76,7 +76,7 @@ const ImageGallery = () => {
 
   const fetchImages = async () => {
     try {
-      const response = await axios.get('http://localhost:1323/images');
+      const response = await axios.get('https://api.vsrs-rs.ru/images');
       setImages(response.data);
       setLoading(false);
     } catch (error) {
@@ -100,7 +100,7 @@ const ImageGallery = () => {
 
     try {
       const deletePromises = Array.from(selectedImages).map(id =>
-        axios.delete(`http://localhost:1323/images/${id}`)
+        axios.delete(`https://api.vsrs-rs.ru/images/${id}`)
       );
       
       await Promise.all(deletePromises);
