@@ -9,14 +9,14 @@ import {
   Typography,
   Box,
   CircularProgress,
-  Paper,
   Checkbox,
-  FormControlLabel,
   Button
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
 import Navigation from './Navigation';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -26,10 +26,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   overflow: 'hidden',
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: theme.shadows[8],
     '& .MuiCardMedia-root': {
-      transform: 'scale(1.05)',
     },
   },
 }));
@@ -50,9 +47,6 @@ const LoadingContainer = styled(Box)({
 const DeleteButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.error.main,
   color: theme.palette.error.contrastText,
-  '&:hover': {
-    backgroundColor: theme.palette.error.dark,
-  },
   padding: '8px 24px',
   borderRadius: '20px',
   textTransform: 'none',
@@ -60,23 +54,31 @@ const DeleteButton = styled(Button)(({ theme }) => ({
   boxShadow: theme.shadows[2],
   transition: 'all 0.3s ease',
   '&:hover': {
+    backgroundColor: theme.palette.error.dark,
     boxShadow: theme.shadows[4],
     transform: 'translateY(-2px)',
   },
 }));
 
 const ImageGallery = () => {
+  const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedImages, setSelectedImages] = useState(new Set());
 
   useEffect(() => {
-    fetchImages();
-  }, []);
+    const token = Cookies.get('authToken');
+    if (!token) {
+      navigate('/enter');
+    } else {
+      fetchImages();
+    }
+  }, [navigate]);
 
   const fetchImages = async () => {
     try {
       const response = await axios.get('https://api.vsrs-rs.ru/images');
+      // const response = await axios.get('http://localhost:1323/images');
       setImages(response.data);
       setLoading(false);
     } catch (error) {
@@ -101,6 +103,7 @@ const ImageGallery = () => {
     try {
       const deletePromises = Array.from(selectedImages).map(id =>
         axios.delete(`https://api.vsrs-rs.ru/images/${id}`)
+        // axios.delete(`http://localhost:1323/images/${id}`)
       );
       
       await Promise.all(deletePromises);
@@ -125,7 +128,7 @@ const ImageGallery = () => {
   return (
     <div style={{ padding: '20px' }}>
       <Navigation />
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
         {selectedImages.size > 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
             <DeleteButton
@@ -151,20 +154,18 @@ const ImageGallery = () => {
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     Uploaded: {new Date(image.created_at).toLocaleString()}
                   </Typography>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedImages.has(image.id)}
-                        onChange={() => toggleImageSelection(image.id)}
-                        color="primary"
-                        sx={{
-                          '&.Mui-checked': {
-                            color: 'error.main',
-                          },
-                        }}
-                      />
-                    }
-                    label="Select for deletion"
+                  <Checkbox
+                    checked={selectedImages.has(image.id)}
+                    onChange={() => toggleImageSelection(image.id)}
+                    color="primary"
+                    sx={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      '&.Mui-checked': {
+                        color: 'error.main',
+                      },
+                    }}
                   />
                 </CardContent>
               </StyledCard>
