@@ -47,7 +47,8 @@ function Navigation() {
             <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
               <div style={{ width: 250, display: 'flex', flexDirection: 'column', padding: '10px' }}>
                 <Button onClick={() => { navigate('/'); setDrawerOpen(false); }} style={{ color: '#000', marginBottom: '10px' }}>Главная</Button>
-                <Button onClick={() => { navigate('/gallery'); setDrawerOpen(false); }} style={{ color: '#000' }}>Изображения</Button>
+                <Button onClick={() => { navigate('/gallery'); setDrawerOpen(false); }} style={{ color: '#000', marginBottom: '10px' }}>Изображения</Button>
+                <Button onClick={() => { navigate('/production'); setDrawerOpen(false); }} style={{ color: '#000' }}>Мониторинг</Button>
               </div>
             </Drawer>
           </>
@@ -55,6 +56,7 @@ function Navigation() {
           <div style={{ display: 'flex', gap: '10px' }}>
             <Button onClick={() => navigate('/')} style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Главная</Button>
             <Button onClick={() => navigate('/gallery')} style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Изображения</Button>
+            <Button onClick={() => navigate('/production')} style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Мониторинг</Button>
           </div>
         )}
         
